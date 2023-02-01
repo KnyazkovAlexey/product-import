@@ -4,7 +4,12 @@ namespace App\Services;
 
 use App\Entity\Product;
 use Doctrine\ORM\EntityManagerInterface;
+use Iterator;
+use SimpleXMLElement;
 
+/**
+ * Class for import product entities.
+ */
 class ProductImporter
 {
     protected EntityManagerInterface $entityManager;
@@ -15,16 +20,19 @@ class ProductImporter
     }
 
     /**
-     * @param string $url
-     * @return int[]
+     * Import product entities from the external XML-file to DB
+     *
+     * @param string $url XML-file address.
+     * @return int[] ['added' => 100, 'updated' => 200]; //todo: ProductImporterResult class
      */
-    public function import(string $url): array
+    public function importFromExternalXml(string $url): array
     {
         $filePath = $this->downLoadFile($url);
         $products = $this->parseFile($filePath);
 
         $added = $updated = 0;
         foreach ($products as $product) {
+            /** @var SimpleXMLElement $product */
             $productId = (int)$product->product_id;
 
             //todo: optimization (getting product_ids at the beginning)
@@ -48,13 +56,18 @@ class ProductImporter
 
         $this->entityManager->flush();
 
-        //todo: ProductImporterResult class
         return [
             'added' => $added,
             'updated' => $updated,
         ];
     }
 
+    /**
+     * Download a file and save it to the internal storage.
+     *
+     * @param string $url File address.
+     * @return string Absolute path to the downloaded file.
+     */
     protected function downLoadFile(string $url): string
     {
         //todo: file downLoading service
@@ -67,18 +80,26 @@ class ProductImporter
         return $filePath;
     }
 
-    protected function parseFile(string $filePath): mixed
+    /**
+     * @param string $filePath Absolute path to the XML-file.
+     * @return Iterator|SimpleXMLElement Products list.
+     */
+    protected function parseFile(string $filePath): Iterator
     {
         //todo: parsing service
         //todo: reading big files piece by piece
         //todo: error handling
 
         $xml = simplexml_load_file($filePath);
-        $products = $xml->products->product;
 
-        return $products;
+        return $xml->products->product;
     }
 
+    /**
+     * Absolute path for uploaded file saving.
+     *
+     * @return string
+     */
     protected function generateFilePath(): string
     {
         $fileName = date('Y-m-d H:i:s').'.xml';
@@ -86,6 +107,11 @@ class ProductImporter
         return $this->getStoragePath().DIRECTORY_SEPARATOR.$fileName;
     }
 
+    /**
+     * Absolute path to folder with downloaded files.
+     *
+     * @return string
+     */
     protected function getStoragePath(): string
     {
         //todo: config or alias to storage dir
