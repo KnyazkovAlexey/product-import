@@ -54,6 +54,7 @@ class ImportProductsCommand extends AbstractLockedCommand
             return Command::FAILURE;
         }
 
+        //todo: error handling, logging
         $importResult = $this->productImporter->import($url);
 
         $io->success(sprintf('Added: %s. Updated: %s.', $importResult['added'], $importResult['updated']));

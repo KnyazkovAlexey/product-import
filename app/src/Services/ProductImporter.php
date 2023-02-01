@@ -59,6 +59,7 @@ class ProductImporter
     {
         //todo: file downLoading service
         //todo: file validation
+        //todo: error handling
 
         $filePath = $this->generateFilePath();
         file_put_contents($filePath, fopen($url, 'r'));
@@ -70,6 +71,7 @@ class ProductImporter
     {
         //todo: parsing service
         //todo: reading big files piece by piece
+        //todo: error handling
 
         $xml = simplexml_load_file($filePath);
         $products = $xml->products->product;
