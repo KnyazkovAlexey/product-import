@@ -20,13 +20,14 @@ class ProductImporter
     }
 
     /**
-     * Import product entities from the external XML-file to DB
+     * Import product entities from the external XML-file to DB.
      *
      * @param string $url XML-file address.
      * @return int[] ['added' => 100, 'updated' => 200]; //todo: ProductImporterResult class
      */
     public function importFromExternalXml(string $url): array
     {
+        //todo: error handling
         $filePath = $this->downLoadFile($url);
         $products = $this->parseFile($filePath);
 
@@ -72,7 +73,6 @@ class ProductImporter
     {
         //todo: file downLoading service
         //todo: file validation
-        //todo: error handling
 
         $filePath = $this->generateFilePath();
         file_put_contents($filePath, fopen($url, 'r'));
@@ -88,7 +88,6 @@ class ProductImporter
     {
         //todo: parsing service
         //todo: reading big files piece by piece
-        //todo: error handling
 
         $xml = simplexml_load_file($filePath);
 
@@ -114,7 +113,7 @@ class ProductImporter
      */
     protected function getStoragePath(): string
     {
-        //todo: config or alias to storage dir
+        //todo: config or alias to the storage dir
 
         return dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR.'storage/import-products';
     }
