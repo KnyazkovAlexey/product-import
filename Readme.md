@@ -26,7 +26,7 @@ docker-compose up -d
 docker exec -it AppSymfony composer install
 docker exec -it AppSymfony bin/console doctrine:database:create
 docker exec -it AppSymfony bin/console doctrine:migrations:migrate
-docker exec -it AppSymfony bin/console app:import-products http://nginx/products.xml
+docker exec -it AppSymfony bin/console app:import-products http://NginxSymfony/products.xml
 </pre>
 
 <h2>Замечания</h2>
