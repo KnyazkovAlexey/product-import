@@ -29,7 +29,7 @@ class ProductImporter
     {
         //todo: error handling
         $filePath = $this->downLoadFile($url);
-        $products = $this->parseFile($filePath);
+        $products = $this->parseXmlFile($filePath);
 
         $added = $updated = 0;
         foreach ($products as $product) {
@@ -64,7 +64,7 @@ class ProductImporter
     }
 
     /**
-     * Download a file and save it to the internal storage.
+     * Download the file and save it to the internal storage.
      *
      * @param string $url File address.
      * @return string Absolute path to the downloaded file.
@@ -74,17 +74,19 @@ class ProductImporter
         //todo: file downLoading service
         //todo: file validation
 
-        $filePath = $this->generateFilePath();
+        $filePath = $this->getStorageFolderPath().DIRECTORY_SEPARATOR.$this->generateFileName();
         file_put_contents($filePath, fopen($url, 'r'));
 
         return $filePath;
     }
 
     /**
+     * Parse the imported file with products.
+     * 
      * @param string $filePath Absolute path to the XML-file.
-     * @return Iterator|SimpleXMLElement Products list.
+     * @return SimpleXMLElement|Iterator Products list.
      */
-    protected function parseFile(string $filePath): Iterator
+    protected function parseXmlFile(string $filePath): Iterator
     {
         //todo: parsing service
         //todo: reading big files piece by piece
@@ -95,15 +97,13 @@ class ProductImporter
     }
 
     /**
-     * Absolute path for uploaded file saving.
+     * Name for uploaded file saving.
      *
      * @return string
      */
-    protected function generateFilePath(): string
+    protected function generateFileName(): string
     {
-        $fileName = date('Y-m-d H:i:s').'.xml';
-
-        return $this->getStoragePath().DIRECTORY_SEPARATOR.$fileName;
+        return date('Y-m-d H:i:s').'.xml';
     }
 
     /**
@@ -111,9 +111,9 @@ class ProductImporter
      *
      * @return string
      */
-    protected function getStoragePath(): string
+    protected function getStorageFolderPath(): string
     {
-        //todo: config or alias to the storage dir
+        //todo: config or alias for the storage folder
 
         return dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR.'storage/import-products';
     }
